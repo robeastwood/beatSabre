@@ -57,7 +57,7 @@
 		  <tbody>
 		  	<tr v-for="score in scores">
 		  		<td>{{ score.levelId }}</td>
-		  		<td>{{ score.difficulty }}</td>
+		  		<td>{{ difficulties[score.difficulty] }}</td>
 		  		<td>{{ score.beatmapCharacteristicName }}</td>
 		  		<td><strong>{{ score.highScore }}</strong></td>		      	
 		  		<td>{{ score.maxCombo }}</td>
@@ -78,6 +78,13 @@
 		  el: '#app',
 		  data: {
 		    message: 'Awaiting File',
+		    difficulties: {
+		    	0: "Easy",
+		    	1: "Normal",
+		    	2: "Hard",
+		    	3: "Expert",
+		    	4: "Expert+"
+		    },
 		    scores: [],
 		  },
 		  methods: {
