@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Beat Sabre Score Parser</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  </head>
+  <body>
+  <div id="app">
+  <section class="section">
+    <div class="container">
+      	<h1 class="title">
+        	Score Parser
+      	</h1>
+      	<p class="subtitle">
+        	Load the <strong>PlayerData.dat</strong> file found in:
+        	C:\Users\[YourUsername]\AppData\LocalLow\Hyperbolic Magnetism\Beat Saber\
+      	</p>
+    	<div class="file">
+  			<label class="file-label">
+				<input class="file-input" type="file" id="selectFiles">
+    			<span class="file-cta">
+	      			<span class="file-icon">
+	        			<i class="fas fa-upload"></i>
+	      			</span>
+      				<span class="file-label">
+        			Select PlayerData.dat
+      				</span>
+    			</span>
+  			</label>
+		</div>
+		<p class="subtitle">
+	        Then click the button to extract your scores:
+	    </p>
+	    <button class="button is-primary" v-on:click="parse">Parse File</button>
+
+    </div>
+  	
+	<div class="container">
+		<p>{{ message }}</p>
+
+		<table class="table">
+		  <thead>
+		    <tr>
+		      <th>Track</th>
+		      <th>Difficulty</th>
+		      <th>Mode</th>
+		      <th>Score</th>
+		      <th>Combo</th>
+		      <th>Rank</th>
+		      <th>Plays</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		  	<tr v-for="score in scores">
+		  		<td>{{ score.levelId }}</td>
+		  		<td>{{ score.difficulty }}</td>
+		  		<td>{{ score.beatmapCharacteristicName }}</td>
+		  		<td><strong>{{ score.highScore }}</strong></td>		      	
+		  		<td>{{ score.maxCombo }}</td>
+		  		<td>{{ score.maxRank }}</td>
+		  		<td>{{ score.playCount }}</td>
+	      	</tr>
+	      </tbody>
+	  </table>
+	</div>
+
+  </section>
+
+	</div>
+  </body>
+
+  	<script>
+		var app = new Vue({
+		  el: '#app',
+		  data: {
+		    message: 'Awaiting File',
+		    scores: [],
+		  },
+		  methods: {
+		  	parse: function() {
+		  		var files = document.getElementById('selectFiles').files;
+			  	if (files.length <= 0) { 
+			  		this.message = "Please select your PlayerData.dat file";
+			  		return false;
+			  	}			  
+				var fr = new FileReader();
+    			var vm = this;
+			  
+			  	fr.onload = function(e) {
+			  		vm.message = "Parsing file...";
+			    	var result = JSON.parse(e.target.result);
+			    	result.localPlayers[0].levelsStatsData.forEach(function(score){
+			    		if(score.highScore > 0 && score.validScore===true){
+			    			console.log(score);
+			    			vm.scores.push(score);
+			    		}		    		
+			    	});
+			    	vm.message = "Done";
+			  	}			  
+			  	fr.readAsText(files.item(0));
+		  	}
+		  }
+		})
+	</script>
+</html>
